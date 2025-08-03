@@ -1,18 +1,29 @@
 package com.android.movielistapp.ui.movielist
 
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,7 +39,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,8 +54,10 @@ import com.android.movielistapp.R
 import com.android.movielistapp.data.Movie
 import com.android.movielistapp.ui.movielist.mvi.MovieListAction
 import com.android.movielistapp.ui.movielist.mvi.MovieListSideEffect
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.collectLatest
-
 
 
 object MovieSelectionHolder {
@@ -53,7 +68,7 @@ object MovieSelectionHolder {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieListScreen(
-    navController: NavController,
+    onNavigateToMovieDetail: (movieId: Int, movie: Movie) -> Unit,
     viewModel: MovieListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -61,15 +76,8 @@ fun MovieListScreen(
     val lazyListState = rememberLazyListState()
     var isRefreshing by remember { mutableStateOf(false) }
 
-    val pullRefreshState = rememberPullToRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            isRefreshing = true
-            viewModel.dispatch(MovieListAction.RefreshList)
-        }
-    )
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
-    // Listen for loading changes to stop refresh
     LaunchedEffect(uiState.isLoading) {
         if (!uiState.isLoading) {
             isRefreshing = false
@@ -81,7 +89,7 @@ fun MovieListScreen(
             when (effect) {
                 is MovieListSideEffect.NavigateToMovieDetails -> {
                     MovieSelectionHolder.selectedMovie = effect.movie
-                    navController.navigate("movieDetail/${effect.movie.id}")
+                    onNavigateToMovieDetail(effect.movie.id, effect.movie)
                 }
                 is MovieListSideEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
@@ -89,6 +97,7 @@ fun MovieListScreen(
                         duration = SnackbarDuration.Short
                     )
                 }
+
                 else -> {}
             }
         }
@@ -97,14 +106,25 @@ fun MovieListScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(title = { Text("Movie Search (MVI)") })
+            TopAppBar(title = { Text(stringResource(id = R.string.movie_list_screen_title)) })
         }
     ) { paddingValues ->
-        Box(
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                isRefreshing = true
+                viewModel.onUserAction(MovieListAction.RefreshList)
+            },
+            indicator = { s, trigger ->
+                SwipeRefreshIndicator(
+                    state = s,
+                    refreshTriggerDistance = trigger,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            },
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState)
         ) {
             Column(
                 modifier = Modifier
@@ -113,22 +133,34 @@ fun MovieListScreen(
             ) {
                 SearchBar(
                     query = uiState.currentQuery,
-                    onQueryChanged = { query -> viewModel.dispatch(MovieListAction.SearchQueryChanged(query)) },
-                    onSearchTriggered = { viewModel.dispatch(MovieListAction.SearchTriggered) },
+                    onQueryChanged = { query ->
+                        viewModel.onUserAction(
+                            MovieListAction.SearchQueryChanged(
+                                query
+                            )
+                        )
+                    },
+                    onSearchTriggered = { viewModel.onUserAction(MovieListAction.SearchTriggered) },
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
                 when {
                     uiState.isLoading && uiState.movies.isEmpty() -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
 
                     uiState.error != null && uiState.movies.isEmpty() -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
-                                text = "Error: ${uiState.error}",
+                                text = stringResource(R.string.error_loading_movies,uiState.error!!),
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(16.dp)
@@ -137,9 +169,12 @@ fun MovieListScreen(
                     }
 
                     uiState.movies.isEmpty() -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
-                                "No movies found. Try a different search term.",
+                                stringResource(id = R.string.no_movies_found),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(16.dp)
                             )
@@ -153,17 +188,23 @@ fun MovieListScreen(
                             contentPadding = PaddingValues(vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            itemsIndexed(uiState.movies, key = { _, movie -> movie.id }) { index, movie ->
+                            itemsIndexed(
+                                uiState.movies,
+                                key = { _, movie -> movie.id }) { index, movie ->
                                 MovieListItem(
                                     movie = movie,
                                     onMovieClick = { selectedMovie ->
-                                        viewModel.dispatch(MovieListAction.MovieClicked(selectedMovie))
+                                        viewModel.onUserAction(
+                                            MovieListAction.MovieClicked(
+                                                selectedMovie
+                                            )
+                                        )
                                     }
                                 )
 
                                 if (index == uiState.movies.lastIndex && uiState.canLoadMore && !uiState.isLoadingMore) {
                                     LaunchedEffect(Unit) {
-                                        viewModel.dispatch(MovieListAction.LoadMoreMovies)
+                                        viewModel.onUserAction(MovieListAction.LoadMoreMovies)
                                     }
                                 }
                             }
@@ -184,7 +225,9 @@ fun MovieListScreen(
                             if (uiState.error != null && uiState.movies.isNotEmpty()) {
                                 item {
                                     Text(
-                                        text = "Error loading more: ${uiState.error}",
+                                        text = stringResource(id = R.string.error_loading_more_movies,
+                                            uiState.error!!
+                                        ),
                                         color = MaterialTheme.colorScheme.error,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -197,12 +240,6 @@ fun MovieListScreen(
                     }
                 }
             }
-
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }
@@ -223,7 +260,7 @@ fun SearchBar(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChanged,
-        label = { Text("Search Movies") },
+        label = { Text(stringResource(R.string.search_movies_label)) },
         singleLine = true,
         modifier = modifier
             .fillMaxWidth()
@@ -234,21 +271,19 @@ fun SearchBar(
                 keyboardController?.hide()
                 focusManager.clearFocus()
             }) {
-                Icon(Icons.Filled.Search, contentDescription = "Search")
+                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_icon_content_description))
             }
         },
-        // Optional: Search on keyboard done action
-        // keyboardActions = KeyboardActions(onSearch = {
-        //     onSearchTriggered()
-        //     keyboardController?.hide()
-        //     focusManager.clearFocus()
-        // }),
-        // keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
+        keyboardActions = KeyboardActions(onSearch = {
+            onSearchTriggered()
+            keyboardController?.hide()
+            focusManager.clearFocus()
+        }),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
     )
-    // Optional: Request focus when the screen loads if isSearchActive is true in state
-    // LaunchedEffect(Unit) {
-    //     focusRequester.requestFocus()
-    // }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }
 
 @Composable
@@ -261,19 +296,19 @@ fun MovieListItem(movie: Movie, onMovieClick: (Movie) -> Unit) {
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.Top // Align items to the top for better text flow
+            verticalAlignment = Alignment.Top
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(movie.getFullPosterUrl())
                     .crossfade(true)
-                    .error(R.drawable.ic_launcher_background) // Replace with a generic placeholder
+                    .error(R.drawable.ic_launcher_background)
                     .placeholder(R.drawable.ic_launcher_background)
                     .build(),
                 contentDescription = movie.title,
                 modifier = Modifier
                     .width(100.dp)
-                    .height(150.dp) // Maintain aspect ratio for posters
+                    .height(150.dp)
                     .padding(end = 12.dp),
                 contentScale = ContentScale.Crop
             )
@@ -296,9 +331,9 @@ fun MovieListItem(movie: Movie, onMovieClick: (Movie) -> Unit) {
                 Text(
                     text = movie.overview,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 4, // Show a bit more overview
+                    maxLines = 4,
                     overflow = TextOverflow.Ellipsis,
-                    lineHeight = 18.sp // Improve readability
+                    lineHeight = 18.sp
                 )
             }
         }

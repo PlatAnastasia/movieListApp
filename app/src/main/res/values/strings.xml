@@ -1,3 +1,52 @@
 <resources>
-    <string name="app_name">MovieListApp</string>
+    <string name="app_name">Movie List App</string>
+
+    <!-- MovieListScreen -->
+    <string name="movie_list_screen_title">Movie List App</string>
+    <string name="search_movies_label">Search Movies</string>
+    <string name="search_icon_content_description">Search</string>
+    <string name="error_loading_movies">Error: %1$s</string>
+    <string name="no_movies_found">No movies found. Try a different search term.</string>
+    <string name="error_loading_more_movies">Error loading more: %1$s</string>
+    <string name="pull_to_refresh_content_description">Pull to refresh</string>
+    <string name="movie_poster_content_description">Poster for %1$s</string>
+    <string name="rating_label">Rating: %.1f</string>
+
+    <!-- MovieDetailScreen -->
+    <string name="movie_detail_screen_title_default">Movie Details</string>
+    <string name="back_button_content_description">Back</string>
+    <string name="error_movie_detail">Error: %1$s</string>
+    <string name="no_movie_details_available">No movie details available.</string>
+    <string name="movie_backdrop_content_description">Backdrop image for %1$s</string>
+    <string name="release_date_label">Release Date: %1$s</string>
+    <string name="rating_detail_label">Rating: %.1f/10 (%2$d votes)</string>
+    <string name="overview_label">Overview</string>
+
+    <!-- Network/API Errors  -->
+    <string name="error_empty_response_body">Empty response from server.</string>
+    <string name="error_api_generic">API Error: %1$s %2$s</string>
+    <string name="error_network_generic">Network Error: %1$s</string>
+    <string name="error_unknown">An unknown error occurred.</string>
+    <string name="error_movie_missing">Movie ID is missing or movie data unavailable.</string>
+    <string name="error_unknown_while_fetching_details">Unknown error while fetching details.</string>
+    <string name="error_empty_response_from_api">Empty response from API.</string>
+    <string name="error_unknown_api_error">Unknown API error.</string>
+
+
+
+    <!-- ViewModel Messages / Side Effects  -->
+    <string name="snackbar_enter_search_term">Please enter a search term.</string>
+    <string name="empty_response_from_successful_call">Received empty data from a successful call.
+    </string>
+    <!-- ... other strings ... -->
+    <string name="error_cannot_retry_no_id">Cannot retry: Movie ID is unknown.</string>
+    <string name="retry_button">Retry</string>
+    <string name="error_empty_response_body_details">Movie data not found.</string>
+    <string name="error_movie_id_missing_detail_view">Cannot display movie details: Movie ID is
+        missing.
+    </string>
+ <!-- Or more user-friendly -->
+    <!-- <string name="error_unknown_while_fetching_details">An error occurred while fetching movie
+        details.
+    </string> -->
 </resources>

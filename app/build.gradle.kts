@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.File
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,6 +9,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
 }
+
 
 android {
     namespace = "com.android.movielistapp"
@@ -19,28 +23,46 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localPropertiesFile = rootProject.file("local.properties")
+        val properties= Properties()
+        properties.load(FileInputStream(localPropertiesFile))
+
+        val apiKey = properties.getProperty("TMDB_API_KEY") ?: ""
+        val baseUrl = properties.getProperty("BASE_URL") ?: ""
+
+        buildConfigField("String", "TMDB_API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
+
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = false 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+        buildConfig = true 
     }
 }
+
+
 
 dependencies {
     // Core & Lifecycle
@@ -54,41 +76,37 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material3.pulltorefresh)
-    implementation("androidx.compose.material3:material3-pullrefresh:1.2.0-alpha03")
-    implementation(platform("androidx.compose:compose-bom:2024.05.00")) // or newer
-
+    implementation(libs.accompanist.swiperefresh)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Image loading
+    // Image Loading
     implementation(libs.coil.compose)
 
     // Networking
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging.interceptor)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
 
-    // Hilt
+    // Dependency Injection (Hilt)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Gson
+    // JSON Parsing
     implementation(libs.gson)
 
-    //OkHttp
-    implementation(libs.okhttp.logging.interceptor)
-
     // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(kotlin("test"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debug-only dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

@@ -1,5 +1,6 @@
 package com.android.movielistapp.di
 
+import com.android.movielistapp.BuildConfig
 import com.android.movielistapp.data.TmdbApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -13,12 +14,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://api.themoviedb.org/3/"
-    const val API_KEY = "2810b46c0fe82e2e7eb43466581d495f"
+    private const val BASE_URL = BuildConfig.BASE_URL
+    const val API_KEY = BuildConfig.TMDB_API_KEY
 
 
     @Provides
