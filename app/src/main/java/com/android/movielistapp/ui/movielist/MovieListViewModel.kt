@@ -1,6 +1,5 @@
 package com.android.movielistapp.ui.movielist
 
-
 import com.android.movielistapp.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +14,14 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the [MovieListScreen].
+ * Manages the UI state, handles user actions, and interacts with the [MovieRepository]
+ * to fetch movie data.
+ *
+ * @param movieRepository The repository to fetch movie data.
+ * @param resourceProvider Utility to access string resources.
+ */
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
     private val movieRepository: MovieRepository,

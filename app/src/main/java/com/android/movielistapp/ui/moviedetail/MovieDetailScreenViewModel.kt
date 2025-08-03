@@ -18,7 +18,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
+/**
+ * ViewModel for the [MovieDetailScreen].
+ * Manages the UI state for movie details, handles actions like loading details,
+ * and interacts with the [MovieRepository].
+ *
+ * @param movieRepository The repository to fetch movie data.
+ * @param resourceProvider Utility to access string resources.
+ */
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
@@ -42,7 +49,7 @@ class MovieDetailViewModel @Inject constructor(
         val currentState = _uiState.value
         when (action) {
             is MovieDetailAction.LoadDetails -> {
-                if (currentState.isLoading && currentState.movieId == action.movieId) return // Already loading this ID
+                if (currentState.isLoading && currentState.movieId == action.movieId) return
                 _uiState.value = MovieDetailState(isLoading = true, movieId = action.movieId, error = null, movie = null)
                 handleSideEffect(MovieDetailSideEffect.FetchMovieDetailsFromApi(action.movieId))
             }
@@ -91,7 +98,7 @@ class MovieDetailViewModel @Inject constructor(
                 }
             }
             MovieDetailSideEffect.TriggerNavigationBack -> {
-                _navigationEffect.emit(MovieDetailSideEffect.TriggerNavigationBack) // Emit to the specific navigation flow
+                _navigationEffect.emit(MovieDetailSideEffect.TriggerNavigationBack)
             }
         }
     }

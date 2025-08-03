@@ -6,6 +6,15 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface TmdbApiService {
+
+    /**
+     * Searches for movies based on a query string.
+     *
+     * @param apiKey Your TMDB API key.
+     * @param query The search query string.
+     * @param page The page number of results to retrieve.
+     * @return A Retrofit [Response] containing a [MovieSearchResponse].
+     */
     @GET("search/movie")
     suspend fun searchMovies(
         @Query("api_key") apiKey: String,
@@ -15,6 +24,13 @@ interface TmdbApiService {
         @Query("include_adult") includeAdult: Boolean = false
     ): Response<MovieSearchResponse>
 
+    /**
+     * Retrieves detailed information for a specific movie by its ID.
+     *
+     * @param movieId The ID of the movie to retrieve details for.
+     * @param apiKey Your TMDB API key.
+     * @return A Retrofit [Response] containing the [Movie] details.
+     */
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,

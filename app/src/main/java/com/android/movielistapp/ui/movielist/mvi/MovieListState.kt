@@ -1,7 +1,9 @@
 package com.android.movielistapp.ui.movielist.mvi
 
 import com.android.movielistapp.data.Movie
-
+/**
+ * Represents the various states of the Movie List screen.
+ */
 data class MovieListState(
     val movies: List<Movie> = emptyList(),
     val isLoading: Boolean = false,

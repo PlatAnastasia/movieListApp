@@ -14,7 +14,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-
+/**
+ * Dagger Hilt module for providing network-related dependencies.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -22,7 +24,10 @@ object NetworkModule {
     private const val BASE_URL = BuildConfig.BASE_URL
     const val API_KEY = BuildConfig.TMDB_API_KEY
 
-
+    /**
+    * Provides an [HttpLoggingInterceptor] for logging HTTP request and response bodies.
+    * For release builds, consider setting the level to [HttpLoggingInterceptor.Level.NONE].
+    */
     @Provides
     @Singleton
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -30,7 +35,11 @@ object NetworkModule {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
-
+    /**
+     * Provides a configured [OkHttpClient] instance.
+     * Includes the logging interceptor and default timeouts.
+     * @param loggingInterceptor The HTTP logging interceptor.
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
@@ -39,13 +48,20 @@ object NetworkModule {
             .build()
     }
 
-
+    /**
+     * Provides a [Gson] instance for JSON serialization and deserialization.
+     */
     @Provides
     @Singleton
     fun provideGson(): Gson {
         return GsonBuilder().create()
     }
 
+    /**
+     * Provides a configured [Retrofit] instance.
+     * @param okHttpClient The OkHttp client.
+     * @param gson The Gson converter.
+     */
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
@@ -56,6 +72,10 @@ object NetworkModule {
             .build()
     }
 
+    /**
+     * Provides an instance of the [TmdbApiService].
+     * @param retrofit The Retrofit instance.
+     */
     @Provides
     @Singleton
     fun provideTmdbApiService(retrofit: Retrofit): TmdbApiService {

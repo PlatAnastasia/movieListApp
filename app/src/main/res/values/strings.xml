@@ -31,22 +31,15 @@
     <string name="error_unknown_while_fetching_details">Unknown error while fetching details.</string>
     <string name="error_empty_response_from_api">Empty response from API.</string>
     <string name="error_unknown_api_error">Unknown API error.</string>
-
-
-
-    <!-- ViewModel Messages / Side Effects  -->
-    <string name="snackbar_enter_search_term">Please enter a search term.</string>
-    <string name="empty_response_from_successful_call">Received empty data from a successful call.
-    </string>
-    <!-- ... other strings ... -->
     <string name="error_cannot_retry_no_id">Cannot retry: Movie ID is unknown.</string>
     <string name="retry_button">Retry</string>
     <string name="error_empty_response_body_details">Movie data not found.</string>
     <string name="error_movie_id_missing_detail_view">Cannot display movie details: Movie ID is
         missing.
     </string>
- <!-- Or more user-friendly -->
-    <!-- <string name="error_unknown_while_fetching_details">An error occurred while fetching movie
-        details.
-    </string> -->
+
+    <!-- ViewModel Messages / Side Effects  -->
+    <string name="snackbar_enter_search_term">Please enter a search term.</string>
+    <string name="empty_response_from_successful_call">Received empty data from a successful call.
+    </string>
 </resources>

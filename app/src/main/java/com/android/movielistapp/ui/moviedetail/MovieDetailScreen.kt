@@ -43,7 +43,7 @@ fun MovieDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.navigationEffect.collect { effect ->
             when (effect) {
-                 MovieDetailSideEffect.TriggerNavigationBack -> {
+                MovieDetailSideEffect.TriggerNavigationBack -> {
                     onNavigateBack()
                 }
             }
@@ -53,9 +53,14 @@ fun MovieDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.movie?.title ?: stringResource(R.string.movie_detail_screen_title_default)) },
+                title = {
+                    Text(
+                        uiState.movie?.title
+                            ?: stringResource(R.string.movie_detail_screen_title_default)
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = { viewModel.onAction(MovieDetailAction.NavigateBack) }) { // Dispatch action
+                    IconButton(onClick = { viewModel.onAction(MovieDetailAction.NavigateBack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_content_description)
@@ -84,9 +89,12 @@ fun MovieDetailScreen(
                     uiState.isLoading -> {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
+
                     uiState.error != null -> {
                         Column(
-                            modifier = Modifier.align(Alignment.Center).padding(16.dp),
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
@@ -102,9 +110,11 @@ fun MovieDetailScreen(
                             }
                         }
                     }
+
                     uiState.movie != null -> {
                         MovieDetailContent(movie = uiState.movie!!)
                     }
+
                     else -> {
                         Text(
                             stringResource(R.string.no_movie_details_available),
@@ -119,6 +129,7 @@ fun MovieDetailScreen(
         }
     }
 }
+
 @Composable
 fun MovieDetailContent(movie: Movie) {
     Column(
@@ -161,7 +172,10 @@ fun MovieDetailContent(movie: Movie) {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = stringResource(id = R.string.rating_detail_label, movie.voteAverage, movie.voteCount),            style = MaterialTheme.typography.bodyLarge
+            text = stringResource(
+                id = R.string.rating_detail_label, movie.voteAverage, movie.voteCount
+            ),
+            style = MaterialTheme.typography.bodyLarge
         )
 
         Spacer(modifier = Modifier.height(16.dp))

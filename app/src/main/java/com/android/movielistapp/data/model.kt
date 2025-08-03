@@ -3,6 +3,9 @@ package com.android.movielistapp.data
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Represents the response structure for a movie search query from the TMDB API.
+ */
 data class MovieSearchResponse(
     val page: Int,
     val results: List<Movie>,
@@ -11,7 +14,9 @@ data class MovieSearchResponse(
     @SerializedName("total_results")
     val totalResults: Int
 )
-
+/**
+ * Represents the response structure for a movie search query from the TMDB API.
+ */
 data class Movie(
     val id: Int,
     val adult: Boolean,
@@ -36,6 +41,9 @@ data class Movie(
     @SerializedName("vote_count")
     val voteCount: Int
 ) {
+/**
+ * Constructs the full URL for the movie's poster image using the TMDB base image URL.
+ */
     fun getFullPosterUrl(): String? {
         return posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }
     }

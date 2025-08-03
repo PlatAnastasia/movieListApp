@@ -1,5 +1,4 @@
 import java.util.Properties
-import java.io.File
 import java.io.FileInputStream
 
 plugins {
@@ -38,7 +37,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false 
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -58,7 +57,7 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true 
+        buildConfig = true
     }
 }
 

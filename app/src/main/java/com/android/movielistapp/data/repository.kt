@@ -6,17 +6,31 @@ import com.android.movielistapp.di.NetworkModule
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * A sealed class representing the result of a network operation.
+ * It can either be a [Success], an [Error], or [Loading].
+ *
+ * @param T The type of data expected from a successful network operation.
+ */
 sealed class NetworkResult<T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T) : NetworkResult<T>(data)
     class Error<T>(message: String, data: T? = null) : NetworkResult<T>(data, message)
     class Loading<T> : NetworkResult<T>()
 }
 
+/**
+* Interface for accessing movie data.
+* This acts as the single source of truth for movie-related information,
+* abstracting the data sources (e.g., network, local database).
+*/
 interface MovieRepository {
+
     suspend fun searchMovies(
         query: String,
         page: Int
     ): NetworkResult<MovieSearchResponse>
+
+
     suspend fun getMovieDetails(
         movieId: Int
     ): NetworkResult<Movie>
@@ -60,7 +74,7 @@ class MovieRepositoryImpl @Inject constructor(
     ): NetworkResult<Movie> {
         return try {
 
-            val response = tmdbApiService.getMovieDetails(movieId = movieId, apiKey = NetworkModule.API_KEY,)
+            val response = tmdbApiService.getMovieDetails(movieId = movieId, apiKey = NetworkModule.API_KEY)
             if (response.isSuccessful) {
                 val movieDetail = response.body()
                 if (movieDetail != null) {

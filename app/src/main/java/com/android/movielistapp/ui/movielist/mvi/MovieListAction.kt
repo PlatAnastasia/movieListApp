@@ -2,7 +2,9 @@ package com.android.movielistapp.ui.movielist.mvi
 
 import com.android.movielistapp.data.Movie
 
-
+/**
+ * Defines all possible user actions that can occur on the Movie List screen.
+ */
 sealed interface MovieListAction {
     // User-initiated actions
     data class SearchQueryChanged(val query: String) : MovieListAction

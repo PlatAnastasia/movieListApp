@@ -11,7 +11,11 @@ import androidx.navigation.navArgument
 import com.android.movielistapp.ui.moviedetail.MovieDetailScreen
 import com.android.movielistapp.ui.movielist.MovieListScreen
 import com.android.movielistapp.ui.movielist.MovieSelectionHolder
-
+/**
+ * Defines the main navigation graph for the application using Jetpack Navigation Compose.
+ * This composable sets up the [NavHost] and declares all the navigable screens (destinations)
+ * and the navigation actions between them.
+ * **/
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
@@ -20,7 +24,7 @@ fun AppNavigation(
     NavHost(
         navController = navController,
         startDestination = AppDestinations.MOVIE_LIST_ROUTE,
-        modifier = modifier // Apply the modifier
+        modifier = modifier
     ) {
         composable(AppDestinations.MOVIE_LIST_ROUTE) {
             MovieListScreen(

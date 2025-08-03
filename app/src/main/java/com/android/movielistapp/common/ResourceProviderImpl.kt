@@ -5,7 +5,12 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-
+/**
+ * Default implementation of [ResourceProvider] that uses the application context
+ * to retrieve string resources.
+ *
+ * @param context The application context, injected by Hilt.
+ */
 @Singleton
 class ResourceProviderImpl @Inject constructor(
     @ApplicationContext

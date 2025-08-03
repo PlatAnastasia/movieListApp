@@ -8,6 +8,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Dagger Hilt module responsible for providing repository dependencies.
+ * This module declares how to provide an instance of [MovieRepository]
+ * when it's requested as a dependency.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {

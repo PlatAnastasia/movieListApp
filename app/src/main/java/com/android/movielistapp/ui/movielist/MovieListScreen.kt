@@ -47,7 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.movielistapp.R
@@ -59,11 +58,9 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.collectLatest
 
-
 object MovieSelectionHolder {
     var selectedMovie: Movie? = null
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -302,8 +299,8 @@ fun MovieListItem(movie: Movie, onMovieClick: (Movie) -> Unit) {
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(movie.getFullPosterUrl())
                     .crossfade(true)
-                    .error(R.drawable.ic_launcher_background)
-                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(android.R.drawable.ic_menu_crop)
+                    .placeholder(android.R.drawable.ic_menu_crop)
                     .build(),
                 contentDescription = movie.title,
                 modifier = Modifier
