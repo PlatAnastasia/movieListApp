@@ -123,3 +123,13 @@ com.android.movielistapp/
 
 7. **English Language UI**
    - All UI strings are in **English**.
+## 📸 Screenshots
+
+### 🔍 Movie List (With Results)
+![Movie List Screen](screenshots/movieListScreen.png)
+
+### ❌ Movie List (No Results)
+![Movie List No Results](screenshots/movieListScreen_noResults.png)
+
+### 🎬 Movie Details
+![Movie Details Screen](screenshots/detailsScreen.png)
